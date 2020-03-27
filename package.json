@@ -3,9 +3,12 @@
   "version": "1.0.0",
   "description": "Noshim division of debts",
   "main": "index.js",
+  "homepage": "https://shacharbuda.github.io/noshim-party/",
   "scripts": {
     "build": "tsc",
     "start": "tsc -w & live-server dist/",
+    "predeploy": "npm run build",
+    "deploy": "gh-pages -d dist",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {
@@ -17,8 +20,8 @@
   "bugs": {
     "url": "https://github.com/shacharbuda/noshim-party/issues"
   },
-  "homepage": "https://github.com/shacharbuda/noshim-party#readme",
   "devDependencies": {
+    "gh-pages": "^2.2.0",
     "live-server": "^1.2.1",
     "tslint": "^6.1.0",
     "typescript": "^3.8.3"
