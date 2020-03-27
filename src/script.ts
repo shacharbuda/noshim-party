@@ -22,11 +22,11 @@ const motiPerson: Person = {
 	debts: [
 		{
 			creditor: 'mizrahi',
-			amount: 500	
+			amount: 500
 		},
 		{
 			creditor: 'discount',
-			amount: 700	
+			amount: 700
 		}
 	],
 	cashAmount: 1000
