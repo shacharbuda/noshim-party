@@ -5,7 +5,7 @@
   "main": "index.js",
   "scripts": {
     "build": "tsc",
-    "start": "npm run build && open dist/index.html",
+    "start": "tsc -w & live-server dist/",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {
@@ -19,6 +19,7 @@
   },
   "homepage": "https://github.com/shacharbuda/noshim-party#readme",
   "devDependencies": {
+    "live-server": "^1.2.1",
     "tslint": "^6.1.0",
     "typescript": "^3.8.3"
   }
