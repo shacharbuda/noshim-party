@@ -1,5 +1,3 @@
-const _ = (window as any)._;
-const $ = (window as any).$;
 
 interface Debt {
 	creditor: string;
@@ -59,11 +57,11 @@ const divideAmountByDebts = (person: Person) => {
 
 const mapToResults = (debts: Debt[] | RelativeDebt[]) => {
 	// Set only creditor name and final amount - relative if exists, real amount otherwise
-	return _.map(debts, d => ({creditor: d.creditor, final: d.relativeTotal ? d.relativeTotal : d.amount}));
+	return _.map(debts, (d: RelativeDebt) => ({creditor: d.creditor, final: d.relativeTotal ? d.relativeTotal : d.amount}));
 }
 
 const getPersonDebts = (person: Person): string => {
-	const res = divideAmountByDebts(person);
+  const res = divideAmountByDebts(person);
 	let html = '<div>';
 	html += `<h1>Person ${person.personName}</h1>`;
 	_.each(res, deb => {
