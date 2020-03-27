@@ -1,0 +1,25 @@
+{
+  "name": "noshim-party",
+  "version": "1.0.0",
+  "description": "Noshim division of debts",
+  "main": "index.js",
+  "scripts": {
+    "build": "tsc",
+    "start": "npm run build && open dist/index.html",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/shacharbuda/noshim-party.git"
+  },
+  "author": "Shachar Buda",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/shacharbuda/noshim-party/issues"
+  },
+  "homepage": "https://github.com/shacharbuda/noshim-party#readme",
+  "devDependencies": {
+    "tslint": "^6.1.0",
+    "typescript": "^3.8.3"
+  }
+}
