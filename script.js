@@ -1,7 +1,7 @@
 const _ = window._;
 const $ = window.$;
 const motiPerson = {
-    personName: 'moti',
+    personName: 'test',
     debts: [
         {
             creditor: 'mizrahi',
