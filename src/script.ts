@@ -9,6 +9,16 @@ interface RelativeDebt extends Debt {
 	relativeTotal: number;
 }
 
+interface FinalDebt {
+  creditor: string;
+  final: number;
+}
+
+interface PersonWithFinalDebts {
+	personName: string;
+  debts: FinalDebt[];
+}
+
 interface Person {
 	personName: string;
 	debts: Debt[];
@@ -55,16 +65,20 @@ const divideAmountByDebts = (person: Person) => {
 	return mapToResults(debtsAsRelative);
 }
 
+
 const mapToResults = (debts: Debt[] | RelativeDebt[]) => {
 	// Set only creditor name and final amount - relative if exists, real amount otherwise
 	return _.map(debts, (d: RelativeDebt) => ({creditor: d.creditor, final: d.relativeTotal ? d.relativeTotal : d.amount}));
 }
 
-const getPersonDebts = (person: Person): string => {
-  const res = divideAmountByDebts(person);
+const debtsToHtml = (peoplesWithDividedDebts: PersonWithFinalDebts[]) => {
+  return _.join(_.map(peoplesWithDividedDebts, p => debtToHtml(p.personName, p.debts)), '<br />');
+}
+
+const debtToHtml = (personName: string, debts: FinalDebt[]): string => {
 	let html = '<div>';
-	html += `<h1>Person ${person.personName}</h1>`;
-	_.each(res, deb => {
+	html += `<h1>Person ${personName}</h1>`;
+	_.each(debts, deb => {
 		html += `<p>${JSON.stringify(deb)}</p>`;
 	});
 	html += '</div>';
@@ -73,6 +87,12 @@ const getPersonDebts = (person: Person): string => {
 }
 
 $(document).ready(() => {
-	const html = getPersonDebts(motiPerson);
+  const peoples = [motiPerson];
+  const peoplesWithDividedDebts: PersonWithFinalDebts[] = _.map(peoples, person => ({
+    personName: person.personName,
+    debts: divideAmountByDebts(motiPerson)
+  }));
+
+  const html = debtsToHtml(peoplesWithDividedDebts)
 	document.write(html);
 });
