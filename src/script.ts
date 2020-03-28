@@ -1,7 +1,7 @@
 
 interface Debt {
 	creditor: string;
-	amount: number;
+  lawAmount: number;
 }
 
 interface RelativeDebt extends Debt {
@@ -30,11 +30,11 @@ const motiPerson: Person = {
 	debts: [
 		{
 			creditor: 'mizrahi',
-			amount: 500
+			lawAmount: 500
 		},
 		{
 			creditor: 'discount',
-			amount: 700
+			lawAmount: 700
 		}
 	],
 	cashAmount: 1000
@@ -43,7 +43,7 @@ const motiPerson: Person = {
 const getFinalDebts = (person: Person): FinalDebt[] => {
 	const totalAvailable = person.cashAmount;
 
-	const totalDebt = _.sumBy(person.debts, (debt: Debt) => debt.amount);
+	const totalDebt = _.sumBy(person.debts, (debt: Debt) => debt.lawAmount);
 
   // All Debts are dividable with total money available by debtor
 	if (totalAvailable >= totalDebt) {
@@ -60,7 +60,7 @@ const getFinalDebts = (person: Person): FinalDebt[] => {
 
 const debtToRelativeDebt = (debt: Debt, totalDebt: number, totalAvailable: number): RelativeDebt => {
   // Relative part is amount / totalDebt
-  const relativePart = debt.amount / totalDebt;
+  const relativePart = debt.lawAmount / totalDebt;
 
   return {
     ...debt,
@@ -72,7 +72,7 @@ const debtToRelativeDebt = (debt: Debt, totalDebt: number, totalAvailable: numbe
 
 const debtsToFinalDebts = (debts: Debt[] | RelativeDebt[]): FinalDebt[] => {
 	// Set only creditor name and final amount - relative if exists, real amount otherwise
-	return _.map(debts, (d: RelativeDebt) => ({creditor: d.creditor, final: d.relativeTotal ? d.relativeTotal : d.amount}));
+	return _.map(debts, (d: RelativeDebt) => ({creditor: d.creditor, final: d.relativeTotal ? d.relativeTotal : d.lawAmount}));
 }
 
 const debtsToHtml = (peoplesWithDividedDebts: PersonWithFinalDebts[]): string => {
