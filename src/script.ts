@@ -41,32 +41,36 @@ const motiPerson: Person = {
 };
 
 const divideAmountByDebts = (person: Person) => {
-	const total = person.cashAmount;
+	const totalAvailable = person.cashAmount;
 
 	const totalDebt = _.sumBy(person.debts, (debt: Debt) => debt.amount);
 
-	if (total >= totalDebt) {
-		return mapToResults({...person.debts});
+  // All Debts are dividable with total money available by debtor
+	if (totalAvailable >= totalDebt) {
+		return debtsToFinalDebts({...person.debts});
 	}
 
 	// Debt has to be divided.
-	const debtsAsRelative = _.map(person.debts, (debt: Debt): RelativeDebt => {
-		// Relative part is amount / totalDebt
-		const relativePart = debt.amount / totalDebt;
+	const debtsAsRelative = _.map(person.debts, debt => (
+    debtToRelativeDebt(debt, totalDebt, totalAvailable)
+  ));
 
-		return {
-			...debt,
-			relativePart,
-			// Real amonut is part * totalAvailable
-			relativeTotal: relativePart * person.cashAmount
-		};
-	});
-
-	return mapToResults(debtsAsRelative);
+	return debtsToFinalDebts(debtsAsRelative);
 }
 
+const debtToRelativeDebt = (debt: Debt, totalDebt: number, totalAvailable: number): RelativeDebt => {
+  // Relative part is amount / totalDebt
+  const relativePart = debt.amount / totalDebt;
 
-const mapToResults = (debts: Debt[] | RelativeDebt[]) => {
+  return {
+    ...debt,
+    relativePart,
+    // Real amonut is part * totalAvailable
+    relativeTotal: relativePart * totalAvailable
+  };
+}
+
+const debtsToFinalDebts = (debts: Debt[] | RelativeDebt[]): FinalDebt[] => {
 	// Set only creditor name and final amount - relative if exists, real amount otherwise
 	return _.map(debts, (d: RelativeDebt) => ({creditor: d.creditor, final: d.relativeTotal ? d.relativeTotal : d.amount}));
 }
