@@ -10,8 +10,7 @@ interface RelativeDebt extends Debt {
 	relativeTotal: number;
 }
 
-interface FinalDebt {
-  creditor: string;
+interface FinalDebt extends Debt {
   final: number;
 }
 
@@ -27,29 +26,44 @@ interface Person {
 }
 
 const motiPerson: Person = {
-	personName: 'moti',
+	personName: 'אהוד',
 	debts: [
 		{
-			creditor: 'mizrahi',
-      lawAmount: 500,
-      settledAmount: 416
+			creditor: 'דוד אביגדור',
+      lawAmount: 24012.14,
 		},
 		{
-			creditor: 'discount',
-			lawAmount: 700
+			creditor: 'פלאפון',
+      lawAmount: 24227.06,
+      settledAmount: 20000
+    },
+    {
+			creditor: 'אמריקן אשראים',
+			lawAmount: 19775.03
+    },
+    {
+			creditor: 'ERN',
+      lawAmount: 1000000,
+      settledAmount: 400000
 		}
 	],
-	cashAmount: 1000
+	cashAmount: 549003.50
 };
 
 const getFinalDebts = (person: Person): FinalDebt[] => {
 	const totalAvailable = person.cashAmount;
 
-  // TODO: is totalDebt for relative calculation is by settlement or law??
-	const totalDebt = _.sumBy(person.debts, (debt: Debt) => getFinalAmount(debt))
+  // Used to calculate actual total debt (with final amount for each debt)
+  const totalLawDebt = _.sumBy(person.debts, debt => debt.lawAmount);
+
+  const totalDebt = _.sumBy(person.debts, debt => {
+    const debtAsRelative = debtToRelativeDebt(debt, totalLawDebt, totalAvailable);
+    return getFinalAmount(debtAsRelative);
+  });
 
   // All Debts are dividable with total money available by debtor
 	if (totalAvailable >= totalDebt) {
+    alert('סכום החוב הכולל קטן מהכסף הזמין לחייב!')
 		return debtsToFinalDebts({...person.debts});
 	}
 
@@ -86,7 +100,7 @@ const getFinalAmount = (debt: Debt): number => {
 
 const debtsToFinalDebts = (debts: Debt[] | RelativeDebt[]): FinalDebt[] => {
 	// Set only creditor name and final amount - relative if exists, real amount otherwise
-	return _.map(debts, (d: RelativeDebt) => ({creditor: d.creditor, final: getFinalAmount(d)}));
+	return _.map(debts, (d: RelativeDebt) => ({creditor: d.creditor, lawAmount: d.lawAmount, final: getFinalAmount(d)}));
 }
 
 const debtsToHtml = (peoplesWithDividedDebts: PersonWithFinalDebts[]): string => {
@@ -95,9 +109,13 @@ const debtsToHtml = (peoplesWithDividedDebts: PersonWithFinalDebts[]): string =>
 
 const debtToHtml = (personName: string, debts: FinalDebt[]): string => {
 	let html = '<div>';
-	html += `<h1>Person ${personName}</h1>`;
+	html += `<h1>חייב ${personName}</h1>`;
 	_.each(debts, deb => {
-		html += `<p>${JSON.stringify(deb)}</p>`;
+    html += '<p>';
+    html += `<b>נושה:</b> ${deb.creditor}, `;
+    html += `<b>חוב מקורי:</b> ${deb.lawAmount.toFixed(2)}, `;
+    html += `<b>סכום לתשלום בפועל:</b> ${deb.final.toFixed(2)}`;
+    html += `</p>`;
 	});
 	html += '</div>';
 
@@ -112,5 +130,5 @@ $(document).ready(() => {
   }));
 
   const html = debtsToHtml(peoplesWithDividedDebts)
-	document.write(html);
+	$(document.body).html(html);
 });
