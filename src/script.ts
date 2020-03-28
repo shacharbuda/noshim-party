@@ -25,26 +25,62 @@ interface Person {
   cashAmount: number;
 }
 
-const motiPerson: Person = {
-  personName: 'אהוד',
+const person1: Person = {
+  personName: 'מרים',
   debts: [
     {
-      creditor: 'דוד אביגדור',
-      lawAmount: 24012.14,
+      "creditor": "פרימיום אקספרס",
+      "lawAmount": 9096.63,
+      "settledAmount": undefined
     },
     {
-      creditor: 'פלאפון',
-      lawAmount: 24227.06,
-      settledAmount: 20000
+      "creditor": "ישראכרט מימון",
+      "lawAmount": 22330.39,
+      "settledAmount": undefined
     },
     {
-      creditor: 'אמריקן אשראים',
-      lawAmount: 19775.03
+      "creditor": "ישראכרט",
+      "lawAmount": 43459.28,
     },
     {
-      creditor: 'ERN',
-      lawAmount: 1000000,
-      settledAmount: 400000
+      "creditor": "מקס איט",
+      "lawAmount": 42778.74,
+      "settledAmount": 40000
+    },
+    {
+      "creditor": "איגוד",
+      "lawAmount": 29694.55,
+      "settledAmount": undefined
+    },
+    {
+      "creditor": "דוד אביגדור",
+      "lawAmount": 24012.14,
+      "settledAmount": 20000
+    },
+    {
+      "creditor": "בנק יהב",
+      "lawAmount": 187110,
+      "settledAmount": undefined
+    },
+    {
+      "creditor": "בנק הפועלים",
+      "lawAmount": 457728.23,
+      "settledAmount": undefined
+    },
+    {
+      "creditor": "בנק איגוד",
+      "lawAmount": 227841.56,
+      "settledAmount": undefined
+    },
+    {
+      "creditor": "בנק דיסקונט",
+      "lawAmount": 39358.8,
+      "settledAmount": undefined
+    },
+    {
+      "creditor": "בנק לאומי",
+      "lawAmount": 202268.59,
+      "settledAmount": 195000
     }
   ],
   cashAmount: 549003.50
@@ -56,13 +92,16 @@ const getFinalDebts = (person: Person): FinalDebt[] => {
   // Used to calculate actual total debt (with final amount for each debt)
   const totalLawDebt = _.sumBy(person.debts, debt => debt.lawAmount);
 
+  // Total debt is total of lawAmount *without* debts with final amount as settled.
   const totalDebt = _.sumBy(person.debts, debt => {
     const debtAsRelative = debtToRelativeDebt(debt, totalLawDebt, totalAvailable);
-    return getFinalAmount(debtAsRelative);
+    const finalAmount = getFinalAmount(debtAsRelative);
+    // If settled - ignore in total debt.
+    return finalAmount === debt.settledAmount ? 0 : debt.lawAmount;
   });
 
   // All Debts are dividable with total money available by debtor
-  if (totalAvailable >= totalDebt) {
+  if (totalAvailable >= totalLawDebt) {
     alert('סכום החוב הכולל קטן מהכסף הזמין לחייב!')
     return debtsToFinalDebts({...person.debts});
   }
@@ -133,10 +172,10 @@ const debtToHtml = (personName: string, debts: FinalDebt[]): string => {
 }
 
 $(document).ready(() => {
-  const peoples = [motiPerson];
+  const peoples = [person1];
   const peoplesWithDividedDebts: PersonWithFinalDebts[] = _.map(peoples, person => ({
     personName: person.personName,
-    debts: getFinalDebts(motiPerson)
+    debts: getFinalDebts(person1)
   }));
 
   const html = debtsToHtml(peoplesWithDividedDebts)
