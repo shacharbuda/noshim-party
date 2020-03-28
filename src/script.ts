@@ -40,7 +40,7 @@ const motiPerson: Person = {
 	cashAmount: 1000
 };
 
-const divideAmountByDebts = (person: Person) => {
+const getFinalDebts = (person: Person): FinalDebt[] => {
 	const totalAvailable = person.cashAmount;
 
 	const totalDebt = _.sumBy(person.debts, (debt: Debt) => debt.amount);
@@ -75,7 +75,7 @@ const debtsToFinalDebts = (debts: Debt[] | RelativeDebt[]): FinalDebt[] => {
 	return _.map(debts, (d: RelativeDebt) => ({creditor: d.creditor, final: d.relativeTotal ? d.relativeTotal : d.amount}));
 }
 
-const debtsToHtml = (peoplesWithDividedDebts: PersonWithFinalDebts[]) => {
+const debtsToHtml = (peoplesWithDividedDebts: PersonWithFinalDebts[]): string => {
   return _.join(_.map(peoplesWithDividedDebts, p => debtToHtml(p.personName, p.debts)), '<br />');
 }
 
@@ -94,7 +94,7 @@ $(document).ready(() => {
   const peoples = [motiPerson];
   const peoplesWithDividedDebts: PersonWithFinalDebts[] = _.map(peoples, person => ({
     personName: person.personName,
-    debts: divideAmountByDebts(motiPerson)
+    debts: getFinalDebts(motiPerson)
   }));
 
   const html = debtsToHtml(peoplesWithDividedDebts)
