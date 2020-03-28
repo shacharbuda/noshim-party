@@ -167,6 +167,8 @@ const debtToHtml = (personName: string, debts: FinalDebt[]): string => {
     html += `</tr>`;
   });
   html += '</table></div>';
+  const total = _.sumBy(debts, d => d.final);
+  html += `<h2>סך הכל תשלום בפועל: ${total.toFixed(2)}</h2>`
 
   return html;
 }
