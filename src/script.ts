@@ -25,8 +25,9 @@ interface Person {
   cashAmount: number;
 }
 
+const cashAmount = 500000.50
 const person1: Person = {
-  personName: 'מרים',
+  personName: 'יוסי',
   debts: [
     {
       "creditor": "פרימיום אקספרס",
@@ -83,8 +84,165 @@ const person1: Person = {
       "settledAmount": 195000
     }
   ],
-  cashAmount: 549003.50
+  cashAmount
 };
+
+const person2: Person = {
+  personName: 'מוטי',
+  debts: [
+    {
+      "creditor": "פלאפון",
+      "lawAmount": 24227.06,
+      "settledAmount": 21000
+    },
+    {
+      "creditor": "אמריקן אשראים",
+      "lawAmount": 19775.03,
+      "settledAmount": undefined
+    },
+    {
+      "creditor": "אי אר אן",
+      "lawAmount": 3657.28,
+      "settledAmount": undefined
+    },
+    {
+      "creditor": "תן דלק",
+      "lawAmount": 4386.74,
+      "settledAmount": undefined
+    },
+    {
+      "creditor": "הוט מובייל",
+      "lawAmount": 8105.59,
+      "settledAmount": undefined
+    },
+    {
+      "creditor": "מרכנתיל",
+      "lawAmount": 56206.57,
+      "settledAmount": 50000
+    },
+    {
+      "creditor": "דוד אביגדור",
+      "lawAmount": 24012.14,
+      "settledAmount": 20000
+    },
+    {
+      "creditor": "בנק יהב",
+      "lawAmount": 187110,
+      "settledAmount": undefined
+    },
+    {
+      "creditor": "בנק הפועלים",
+      "lawAmount": 457728.23,
+      "settledAmount": undefined
+    },
+    {
+      "creditor": "בנק איגוד",
+      "lawAmount": 227841.56,
+      "settledAmount": undefined
+    },
+    {
+      "creditor": "בנק דיסקונט",
+      "lawAmount": 39358.8,
+      "settledAmount": undefined
+    },
+    {
+      "creditor": "בנק לאומי",
+      "lawAmount": 202268.59,
+      "settledAmount": 195000
+    },
+    {
+      "creditor": "מימון ישיר",
+      "lawAmount": 60778.61,
+      "settledAmount": 54566
+    },
+    {
+      "creditor": "מימון ישיר",
+      "lawAmount": 8122,
+      "settledAmount": 7287
+    },
+    {
+      "creditor": "אגוד",
+      "lawAmount": 22333.05,
+      "settledAmount": undefined
+    },
+    {
+      "creditor": "מימון ישיר",
+      "lawAmount": 7327.98,
+      "settledAmount": 6590
+    },
+    {
+      "creditor": "רצון ליברמן",
+      "lawAmount": 4571.87,
+      "settledAmount": 4000
+    },
+    {
+      "creditor": "מ. אמיר",
+      "lawAmount": 20450,
+      "settledAmount": 17000
+    },
+    {
+      "creditor": "מיטב דש",
+      "lawAmount": 7500.21,
+      "settledAmount": 6300
+    },
+    {
+      "creditor": "בנק ירושלים",
+      "lawAmount": 49531.93,
+      "settledAmount": 40000
+    },
+    {
+      "creditor": "ישראכרט",
+      "lawAmount": 40296.79,
+      "settledAmount": 33000
+    },
+    {
+      "creditor": "טריא",
+      "lawAmount": 20487.3,
+      "settledAmount": undefined
+    },
+    {
+      "creditor": "יונט",
+      "lawAmount": 43451.17,
+      "settledAmount": 42000
+    },
+    {
+      "creditor": "כאל",
+      "lawAmount": 105346.36,
+      "settledAmount": undefined
+    },
+    {
+      "creditor": "פרטנר",
+      "lawAmount": 22399.67,
+      "settledAmount": undefined
+    },
+    {
+      "creditor": "לב אביבים",
+      "lawAmount": 24834.87,
+      "settledAmount": undefined
+    },
+    {
+      "creditor": "פרטנר",
+      "lawAmount": 15812.79,
+      "settledAmount": undefined
+    },
+    {
+      "creditor": "ענו החזקות",
+      "lawAmount": 33294.31,
+      "settledAmount": undefined
+    },
+    {
+      "creditor": "איילון ייעוץ",
+      "lawAmount": 13257.8,
+      "settledAmount": 9000
+    },
+    {
+      "creditor": "אשטרום",
+      "lawAmount": 82276.64,
+      "settledAmount": undefined
+    }
+  ],
+  cashAmount
+}
 
 const getFinalDebts = (person: Person): FinalDebt[] => {
   const totalAvailable = person.cashAmount;
@@ -174,10 +332,10 @@ const debtToHtml = (personName: string, debts: FinalDebt[]): string => {
 }
 
 $(document).ready(() => {
-  const peoples = [person1];
+  const peoples = [person1, person2];
   const peoplesWithDividedDebts: PersonWithFinalDebts[] = _.map(peoples, person => ({
     personName: person.personName,
-    debts: getFinalDebts(person1)
+    debts: getFinalDebts(person)
   }));
 
   const html = debtsToHtml(peoplesWithDividedDebts)
