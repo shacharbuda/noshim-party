@@ -110,14 +110,24 @@ const debtsToHtml = (peoplesWithDividedDebts: PersonWithFinalDebts[]): string =>
 const debtToHtml = (personName: string, debts: FinalDebt[]): string => {
   let html = '<div>';
   html += `<h1>חייב ${personName}</h1>`;
+  html += `
+  <table class="table">
+    <tr>
+      <th>נושה</th>
+      <th>חוב מקורי</th>
+      <th>סכום לתשלום בפועל</th>
+    </tr>`;
   _.each(debts, deb => {
-    html += '<p>';
-    html += `<b>נושה:</b> ${deb.creditor}, `;
-    html += `<b>חוב מקורי:</b> ${deb.lawAmount.toFixed(2)}, `;
-    html += `<b>סכום לתשלום בפועל:</b> ${deb.final.toFixed(2)}`;
-    html += `</p>`;
+    html += '<tr>';
+    html += '<td>' + deb.creditor;
+    html += '</td>';
+    html += '<td>' + deb.lawAmount.toFixed(2);
+    html += '</td>';
+    html += '<td>' + deb.final.toFixed(2);
+    html += '</td>';
+    html += `</tr>`;
   });
-  html += '</div>';
+  html += '</table></div>';
 
   return html;
 }
