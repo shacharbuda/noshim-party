@@ -5,6 +5,7 @@ interface Debt {
   settledAmount?: number;
   relativePart?: number;
   relativeTotal?: number;
+  initialRelativeTotal?: number;
 }
 
 interface FinalDebt extends Debt {
@@ -250,6 +251,9 @@ const getFinalDebts = (person: Person): FinalDebt[] => {
   // Total debt is total of lawAmount *without* debts with final amount as settled.
   const totalDebt = _.sumBy(person.debts, debt => {
     const debtAsRelative = debtToRelativeDebt(debt, totalLawDebt, totalAvailable);
+    // TODO: save this in another place! in sumBy is ugly.
+    // Save the initialRelative compution
+    debt.initialRelativeTotal = debtAsRelative.relativeTotal;
     const finalAmount = getFinalAmount(debtAsRelative);
     // If settled - ignore in total debt.
     return finalAmount === debt.settledAmount ? 0 : debt.lawAmount;
@@ -318,7 +322,7 @@ const debtToHtml = (personName: string, debts: FinalDebt[]): string => {
     html += '<tr>';
     html += td(deb.creditor);
     html += td(lawAmount);
-    html += td(deb.relativeTotal ? deb.relativeTotal.toFixed(2) : lawAmount);
+    html += td(deb.initialRelativeTotal.toFixed(2));
     html += td(deb.settledAmount ? deb.settledAmount : '-');
     html += td(deb.final.toFixed(2));
     html += `</tr>`;
