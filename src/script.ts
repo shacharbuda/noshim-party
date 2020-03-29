@@ -120,7 +120,7 @@ const person2: Person = {
     {
       "creditor": "דוד אביגדור",
       "lawAmount": 24012.14,
-      "settledAmount": 20000
+      "settledAmount": 7025.91
     },
     {
       "creditor": "בנק יהב",
@@ -145,7 +145,7 @@ const person2: Person = {
     {
       "creditor": "בנק לאומי",
       "lawAmount": 202268.59,
-      "settledAmount": 195000
+      "settledAmount": 85711.50
     },
     {
       "creditor": "מימון ישיר",
