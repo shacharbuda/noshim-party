@@ -3,16 +3,12 @@ interface Debt {
   creditor: string;
   lawAmount: number;
   settledAmount?: number;
-}
-
-interface RelativeDebt extends Debt {
-  relativePart: number;
-  relativeTotal: number;
+  relativePart?: number;
+  relativeTotal?: number;
 }
 
 interface FinalDebt extends Debt {
   final: number;
-  relativeTotal?: number;
 }
 
 interface PersonWithFinalDebts {
@@ -273,7 +269,7 @@ const getFinalDebts = (person: Person): FinalDebt[] => {
   return debtsToFinalDebts(debtsAsRelative);
 }
 
-const debtToRelativeDebt = (debt: Debt, totalDebt: number, totalAvailable: number): RelativeDebt => {
+const debtToRelativeDebt = (debt: Debt, totalDebt: number, totalAvailable: number): Debt => {
   // Relative part is amount / totalDebt
   const relativePart = debt.lawAmount / totalDebt;
 
@@ -287,7 +283,7 @@ const debtToRelativeDebt = (debt: Debt, totalDebt: number, totalAvailable: numbe
 
 const getFinalAmount = (debt: Debt): number => {
   // debt as relative to get undefinded or defined relative
-  const { relativeTotal, lawAmount, settledAmount: settledFinal } = debt as RelativeDebt;
+  const { relativeTotal, lawAmount, settledAmount: settledFinal } = debt;
 
   // By law, final amount to pay is relative if exist - other lawTotal
   const lawFinal = relativeTotal ? relativeTotal : lawAmount;
@@ -296,9 +292,9 @@ const getFinalAmount = (debt: Debt): number => {
   return _.min([lawFinal, settledFinal]);
 }
 
-const debtsToFinalDebts = (debts: Debt[] | RelativeDebt[]): FinalDebt[] => {
+const debtsToFinalDebts = (debts: Debt[]): FinalDebt[] => {
   // Set only creditor name and final amount - relative if exists, real amount otherwise
-  return _.map(debts, (d: RelativeDebt) => ({...d,  final: getFinalAmount(d)}));
+  return _.map(debts, (d: Debt) => ({...d,  final: getFinalAmount(d)}));
 }
 
 const debtsToHtml = (peoplesWithDividedDebts: PersonWithFinalDebts[]): string => {
