@@ -1,6 +1,6 @@
-const cashAmount = 500000.50;
+const cashAmount = 694670;
 const person1 = {
-    personName: 'יוסי',
+    personName: 'מרים',
     debts: [
         {
             "creditor": "פרימיום אקספרס",
@@ -60,7 +60,7 @@ const person1 = {
     cashAmount
 };
 const person2 = {
-    personName: 'מוטי',
+    personName: 'אהוד',
     debts: [
         {
             "creditor": "פלאפון",
@@ -95,7 +95,7 @@ const person2 = {
         {
             "creditor": "דוד אביגדור",
             "lawAmount": 24012.14,
-            "settledAmount": 20000
+            "settledAmount": 7025.91
         },
         {
             "creditor": "בנק יהב",
@@ -120,7 +120,7 @@ const person2 = {
         {
             "creditor": "בנק לאומי",
             "lawAmount": 202268.59,
-            "settledAmount": 195000
+            "settledAmount": 85711.50
         },
         {
             "creditor": "מימון ישיר",
@@ -217,24 +217,28 @@ const person2 = {
 };
 const getFinalDebts = (person) => {
     const totalAvailable = person.cashAmount;
-    // Used to calculate actual total debt (with final amount for each debt)
+    // First calc - total debt by law, to enable calc of divison relative
     const totalLawDebt = _.sumBy(person.debts, debt => debt.lawAmount);
-    // Total debt is total of lawAmount *without* debts with final amount as settled.
-    const totalDebt = _.sumBy(person.debts, debt => {
-        const debtAsRelative = debtToRelativeDebt(debt, totalLawDebt, totalAvailable);
-        const finalAmount = getFinalAmount(debtAsRelative);
-        // If settled - ignore in total debt.
-        return finalAmount === debt.settledAmount ? 0 : debt.lawAmount;
-    });
+    // Calc relative debts by totalLawDebt and totalAvailable
+    const debtsAsRelativeLaw = _.map(person.debts, debt => debtToRelativeDebt(debt, totalLawDebt, totalAvailable));
+    // totalLeft is all money without settled debts
+    const totalMoneyLeft = totalAvailable - _.sumBy(debtsAsRelativeLaw, d => isSettled(d) ? d.settledAmount : 0);
+    // totalDebtLeft is all debts without settled debts
+    const totalDebtLeft = _.sumBy(debtsAsRelativeLaw, d => isSettled(d) ? 0 : d.lawAmount);
+    // Add initialDebt data for debts to show on final view
+    const debtsWithInitialData = _.map(debtsAsRelativeLaw, d => (Object.assign(Object.assign({}, d), { initialRelativeTotal: d.relativeTotal })));
     // All Debts are dividable with total money available by debtor
     if (totalAvailable >= totalLawDebt) {
         alert('סכום החוב הכולל קטן מהכסף הזמין לחייב!');
         return debtsToFinalDebts(Object.assign({}, person.debts));
     }
     // Debt has to be divided.
-    const debtsAsRelative = _.map(person.debts, debt => (debtToRelativeDebt(debt, totalDebt, totalAvailable)));
+    const debtsAsRelative = _.map(debtsWithInitialData, debt => (
+    // Use totalDebtLeft and totalLeft - ignore settled!
+    debtToRelativeDebt(debt, totalDebtLeft, totalMoneyLeft)));
     return debtsToFinalDebts(debtsAsRelative);
 };
+const isSettled = (d) => d.settledAmount && getFinalAmount(d) === d.settledAmount;
 const debtToRelativeDebt = (debt, totalDebt, totalAvailable) => {
     // Relative part is amount / totalDebt
     const relativePart = debt.lawAmount / totalDebt;
@@ -252,7 +256,7 @@ const getFinalAmount = (debt) => {
 };
 const debtsToFinalDebts = (debts) => {
     // Set only creditor name and final amount - relative if exists, real amount otherwise
-    return _.map(debts, (d) => ({ creditor: d.creditor, lawAmount: d.lawAmount, final: getFinalAmount(d) }));
+    return _.map(debts, (d) => (Object.assign(Object.assign({}, d), { final: getFinalAmount(d) })));
 };
 const debtsToHtml = (peoplesWithDividedDebts) => {
     return _.join(_.map(peoplesWithDividedDebts, p => debtToHtml(p.personName, p.debts)), '<br />');
@@ -261,20 +265,22 @@ const debtToHtml = (personName, debts) => {
     let html = '<div>';
     html += `<h1>חייב ${personName}</h1>`;
     html += `
-  <table class="table">
+  <table class="table table-hover text-center">
     <tr>
       <th>נושה</th>
       <th>חוב מקורי</th>
+      <th>חוב לתשלום עפ דין</th>
+      <th>חוב לתשלום עפ הסדר</th>
       <th>סכום לתשלום בפועל</th>
     </tr>`;
     _.each(debts, deb => {
+        const lawAmount = deb.lawAmount.toFixed(2);
         html += '<tr>';
-        html += '<td>' + deb.creditor;
-        html += '</td>';
-        html += '<td>' + deb.lawAmount.toFixed(2);
-        html += '</td>';
-        html += '<td>' + deb.final.toFixed(2);
-        html += '</td>';
+        html += td(deb.creditor);
+        html += td(lawAmount);
+        html += td(deb.initialRelativeTotal.toFixed(2));
+        html += td(deb.settledAmount ? deb.settledAmount : '-');
+        html += td(deb.final.toFixed(2));
         html += `</tr>`;
     });
     html += '</table></div>';
@@ -282,6 +288,7 @@ const debtToHtml = (personName, debts) => {
     html += `<h2>סך הכל תשלום בפועל: ${total.toFixed(2)}</h2>`;
     return html;
 };
+const td = (textContent) => `<td>${textContent}</td>`;
 $(document).ready(() => {
     const peoples = [person1, person2];
     const peoplesWithDividedDebts = _.map(peoples, person => ({
