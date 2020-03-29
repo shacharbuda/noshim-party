@@ -314,10 +314,11 @@ const debtToHtml = (personName: string, debts: FinalDebt[]): string => {
       <th>סכום לתשלום בפועל</th>
     </tr>`;
   _.each(debts, deb => {
+    const lawAmount = deb.lawAmount.toFixed(2);
     html += '<tr>';
     html += td(deb.creditor);
-    html += td(deb.lawAmount.toFixed(2));
-    html += td(deb.relativeTotal ? deb.relativeTotal : deb.lawAmount);
+    html += td(lawAmount);
+    html += td(deb.relativeTotal ? deb.relativeTotal.toFixed(2) : lawAmount);
     html += td(deb.settledAmount ? deb.settledAmount : '-');
     html += td(deb.final.toFixed(2));
     html += `</tr>`;
