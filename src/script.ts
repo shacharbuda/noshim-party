@@ -24,7 +24,7 @@ interface Person {
 
 const cashAmount = 694670;
 const person1: Person = {
-  personName: 'מרים',
+  personName: 'יוסי',
   debts: [
     {
       "creditor": "פרימיום אקספרס",
