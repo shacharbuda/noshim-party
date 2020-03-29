@@ -243,7 +243,7 @@ const person2: Person = {
 }
 
 const getFinalDebts = (person: Person): FinalDebt[] => {
-  const totalAvailable = person.cashAmount;
+  let totalAvailable = person.cashAmount;
 
   // Used to calculate actual total debt (with final amount for each debt)
   const totalLawDebt = _.sumBy(person.debts, debt => debt.lawAmount);
@@ -256,8 +256,15 @@ const getFinalDebts = (person: Person): FinalDebt[] => {
     debt.initialRelativeTotal = debtAsRelative.relativeTotal;
     const finalAmount = getFinalAmount(debtAsRelative);
     // If settled - ignore in total debt.
-    return finalAmount === debt.settledAmount ? 0 : debt.lawAmount;
+    if (finalAmount === debt.settledAmount) {
+      totalAvailable -= finalAmount;
+      return 0;
+    } else {
+      return debt.lawAmount;
+    }
   });
+
+  console.log('totalDebt ?', totalDebt);
 
   // All Debts are dividable with total money available by debtor
   if (totalAvailable >= totalLawDebt) {
