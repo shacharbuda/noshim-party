@@ -240,31 +240,25 @@ const person2: Person = {
     }
   ],
   cashAmount
-}
+};
 
 const getFinalDebts = (person: Person): FinalDebt[] => {
-  let totalAvailable = person.cashAmount;
+  const totalAvailable = person.cashAmount;
 
-  // Used to calculate actual total debt (with final amount for each debt)
+  // First calc - total debt by law, to enable calc of divison relative
   const totalLawDebt = _.sumBy(person.debts, debt => debt.lawAmount);
 
-  // Total debt is total of lawAmount *without* debts with final amount as settled.
-  const totalDebt = _.sumBy(person.debts, debt => {
-    const debtAsRelative = debtToRelativeDebt(debt, totalLawDebt, totalAvailable);
-    // TODO: save this in another place! in sumBy is ugly.
-    // Save the initialRelative compution
-    debt.initialRelativeTotal = debtAsRelative.relativeTotal;
-    const finalAmount = getFinalAmount(debtAsRelative);
-    // If settled - ignore in total debt.
-    if (finalAmount === debt.settledAmount) {
-      totalAvailable -= finalAmount;
-      return 0;
-    } else {
-      return debt.lawAmount;
-    }
-  });
+  // Calc relative debts by totalLawDebt and totalAvailable
+  const debtsAsRelativeLaw = _.map(person.debts, debt => debtToRelativeDebt(debt, totalLawDebt, totalAvailable));
 
-  console.log('totalDebt ?', totalDebt);
+  // totalLeft is all money without settled debts
+  const totalMoneyLeft = totalAvailable - _.sumBy(debtsAsRelativeLaw, d => isSettled(d) ? d.settledAmount : 0);
+
+  // totalDebtLeft is all debts without settled debts
+  const totalDebtLeft = _.sumBy(debtsAsRelativeLaw, d => isSettled(d) ? 0 : d.lawAmount);
+
+  // Add initialDebt data for debts to show on final view
+  const debtsWithInitialData = _.map(debtsAsRelativeLaw, d => ({...d, initialRelativeTotal: d.relativeTotal}));
 
   // All Debts are dividable with total money available by debtor
   if (totalAvailable >= totalLawDebt) {
@@ -273,12 +267,15 @@ const getFinalDebts = (person: Person): FinalDebt[] => {
   }
 
   // Debt has to be divided.
-  const debtsAsRelative = _.map(person.debts, debt => (
-    debtToRelativeDebt(debt, totalDebt, totalAvailable)
+  const debtsAsRelative = _.map(debtsWithInitialData, debt => (
+    // Use totalDebtLeft and totalLeft - ignore settled!
+    debtToRelativeDebt(debt, totalDebtLeft, totalMoneyLeft)
   ));
 
   return debtsToFinalDebts(debtsAsRelative);
 }
+
+const isSettled = (d: Debt): boolean => d.settledAmount && getFinalAmount(d) === d.settledAmount;
 
 const debtToRelativeDebt = (debt: Debt, totalDebt: number, totalAvailable: number): Debt => {
   // Relative part is amount / totalDebt
