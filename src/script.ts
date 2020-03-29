@@ -12,6 +12,7 @@ interface RelativeDebt extends Debt {
 
 interface FinalDebt extends Debt {
   final: number;
+  relativeTotal?: number;
 }
 
 interface PersonWithFinalDebts {
@@ -297,7 +298,7 @@ const getFinalAmount = (debt: Debt): number => {
 
 const debtsToFinalDebts = (debts: Debt[] | RelativeDebt[]): FinalDebt[] => {
   // Set only creditor name and final amount - relative if exists, real amount otherwise
-  return _.map(debts, (d: RelativeDebt) => ({creditor: d.creditor, lawAmount: d.lawAmount, final: getFinalAmount(d)}));
+  return _.map(debts, (d: RelativeDebt) => ({...d,  final: getFinalAmount(d)}));
 }
 
 const debtsToHtml = (peoplesWithDividedDebts: PersonWithFinalDebts[]): string => {
@@ -308,20 +309,21 @@ const debtToHtml = (personName: string, debts: FinalDebt[]): string => {
   let html = '<div>';
   html += `<h1>חייב ${personName}</h1>`;
   html += `
-  <table class="table">
+  <table class="table table-hover text-center">
     <tr>
       <th>נושה</th>
       <th>חוב מקורי</th>
+      <th>חוב לתשלום עפ דין</th>
+      <th>חוב לתשלום עפ הסדר</th>
       <th>סכום לתשלום בפועל</th>
     </tr>`;
   _.each(debts, deb => {
     html += '<tr>';
-    html += '<td>' + deb.creditor;
-    html += '</td>';
-    html += '<td>' + deb.lawAmount.toFixed(2);
-    html += '</td>';
-    html += '<td>' + deb.final.toFixed(2);
-    html += '</td>';
+    html += td(deb.creditor);
+    html += td(deb.lawAmount.toFixed(2));
+    html += td(deb.relativeTotal ? deb.relativeTotal : deb.lawAmount);
+    html += td(deb.settledAmount ? deb.settledAmount : '-');
+    html += td(deb.final.toFixed(2));
     html += `</tr>`;
   });
   html += '</table></div>';
@@ -330,6 +332,8 @@ const debtToHtml = (personName: string, debts: FinalDebt[]): string => {
 
   return html;
 }
+
+const td = (textContent) => `<td>${textContent}</td>`;
 
 $(document).ready(() => {
   const peoples = [person1, person2];
