@@ -23,7 +23,7 @@ interface Person {
   cashAmount: number;
 }
 
-const cashAmount = 694670;
+const cashAmount = 2562 / 2;
 const person1: Person = {
   personName: 'מרים',
   debts: [
@@ -176,7 +176,7 @@ const person2: Person = {
     {
       "creditor": "מ. אמיר",
       "lawAmount": 20450,
-      "settledAmount": 17000
+      "settledAmount": 0
     },
     {
       "creditor": "מיטב דש",
