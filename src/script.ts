@@ -1,4 +1,5 @@
-
+// Global setup
+const intlNumFormat = (n: number): string => new Intl.NumberFormat('he-IL', { style: 'currency', currency: 'ILS' }).format(n).replace(/\D00(?=\D*$)/, '');
 interface Debt {
   creditor: string;
   lawAmount: number;
@@ -322,23 +323,31 @@ const debtToHtml = (personName: string, debts: FinalDebt[]): string => {
       <th>סכום לתשלום בפועל</th>
     </tr>`;
   _.each(debts, deb => {
-    const lawAmount = deb.lawAmount.toFixed(2);
+    const lawAmount = deb.lawAmount;
     html += '<tr>';
     html += td(deb.creditor);
     html += td(lawAmount);
-    html += td(deb.initialRelativeTotal.toFixed(2));
+    html += td(deb.initialRelativeTotal);
     html += td(isSettled(deb) ? deb.settledAmount : '-');
-    html += td(deb.final.toFixed(2));
+    html += td(deb.final);
     html += `</tr>`;
   });
   html += '</table></div>';
   const total = _.sumBy(debts, d => d.final);
-  html += `<h2>סך הכל תשלום בפועל: ${total.toFixed(2)}</h2>`
+  html += `<h2>סך הכל תשלום בפועל: ${intlNumFormat(total)}</h2>`
 
   return html;
 }
 
-const td = (textContent) => `<td>${textContent}</td>`;
+const td = (textContent) => {
+  let finalText;
+  if (isNaN(textContent)) {
+    finalText = textContent
+  } else {
+    finalText = intlNumFormat(textContent);
+  }
+  return `<td>${finalText}</td>`;
+}
 
 $(document).ready(() => {
   const peoples = [person1, person2];
