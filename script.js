@@ -279,7 +279,7 @@ const debtToHtml = (personName, debts) => {
         html += td(deb.creditor);
         html += td(lawAmount);
         html += td(deb.initialRelativeTotal.toFixed(2));
-        html += td(deb.settledAmount ? deb.settledAmount : '-');
+        html += td(isSettled(deb) ? deb.settledAmount : '-');
         html += td(deb.final.toFixed(2));
         html += `</tr>`;
     });
