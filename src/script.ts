@@ -275,7 +275,7 @@ const getFinalDebts = (person: Person): FinalDebt[] => {
   return debtsToFinalDebts(debtsAsRelative);
 }
 
-const isSettled = (d: Debt): boolean => d.settledAmount && getFinalAmount(d) === d.settledAmount;
+const isSettled = (d: Debt): boolean => d.settledAmount !== undefined && getFinalAmount(d) === d.settledAmount;
 
 const debtToRelativeDebt = (debt: Debt, totalDebt: number, totalAvailable: number): Debt => {
   // Relative part is amount / totalDebt
