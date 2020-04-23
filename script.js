@@ -238,7 +238,7 @@ const getFinalDebts = (person) => {
     debtToRelativeDebt(debt, totalDebtLeft, totalMoneyLeft)));
     return debtsToFinalDebts(debtsAsRelative);
 };
-const isSettled = (d) => d.settledAmount && getFinalAmount(d) === d.settledAmount;
+const isSettled = (d) => d.settledAmount !== undefined && getFinalAmount(d) === d.settledAmount;
 const debtToRelativeDebt = (debt, totalDebt, totalAvailable) => {
     // Relative part is amount / totalDebt
     const relativePart = debt.lawAmount / totalDebt;
